@@ -3,6 +3,17 @@ import matplotlib.pyplot as plt
 import argparse
 
 from skimage import io
+from skimage.exposure import histogram
+from skimage.io import imshow
+
+
+def create_hyst(img):
+    hist_red, bins_red = histogram(img[:, :, 2])
+    hist_green, bins_green = histogram(img[:, :, 1])
+    hist_blue, bins_blue = histogram(img[:, :, 0])
+    plt.plot(bins_green, hist_green, color='green', linestyle='-', linewidth=1)
+    plt.plot(bins_red, hist_red, color='red', linestyle='-', linewidth=1)
+    plt.plot(bins_blue, hist_blue, color='blue', linestyle='-', linewidth=1)
 
 
 def validate_k(k):
@@ -73,15 +84,19 @@ elif second_arr.shape > first_arr.shape:
 multiply_rule(first_arr, second_arr, k)
 result_arr = np.multiply(first_arr, second_arr)
 
-fig, axes = plt.subplots(1, 3, figsize=(8, 4))
-ax = axes.ravel()
-
-ax[0].imshow(first_img)
-ax[0].set_title("First Image")
-ax[1].imshow(second_img)
-ax[1].set_title("Second Image")
-ax[2].imshow(result_arr)
-ax[2].set_title("Result")
+fig = plt.figure()
+fig.add_subplot(2, 3, 1)
+imshow(first_img)
+fig.add_subplot(2, 3, 2)
+imshow(second_img)
+fig.add_subplot(2, 3, 3)
+imshow(result_arr)
+fig.add_subplot(2, 3, 4)
+create_hyst(first_img)
+fig.add_subplot(2, 3, 5)
+create_hyst(second_img)
+fig.add_subplot(2, 3, 6)
+create_hyst(result_arr)
 
 fig.tight_layout()
 plt.show()
